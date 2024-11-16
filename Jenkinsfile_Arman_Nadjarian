@@ -7,22 +7,24 @@ pipeline {
         stage('Setup') {
             steps {
                 script {
-                    bat 'python -m venv venv'
-                    bat 'venv\\Scripts\\activate && pip install -r requirements.txt'
+                    if (!fileExists("${env.WORKSPACE}/${VIRTUAL_ENV}")) {
+                        sh "python -m venv ${VIRTUAL_ENV}"
+                    }
+                    sh "source ${VIRTUAL_ENV}/bin/activate && pip install -r requirements.txt"
                 }
             }
         }
         stage('Lint') {
             steps {
                 script {
-                    bat 'venv\\Scripts\\activate && flake8 app.py'
+                    sh "source ${VIRTUAL_ENV}/bin/activate && flake8 app.py"
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    bat 'venv\\Scripts\\activate && pytest'
+                    sh "source ${VIRTUAL_ENV}/bin/activate && pytest"
                 }
             }
         }
