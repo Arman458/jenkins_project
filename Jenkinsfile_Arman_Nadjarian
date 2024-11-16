@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         VIRTUAL_ENV = 'venv'
+        DEPLOYDIR = 'C:\\Deployment'
     }
     stages {
         stage('Setup') {
@@ -48,14 +49,19 @@ pipeline {
                 }
             }
 }
-        stage('Deploy') {
+        stage('Deployment') {
             steps {
                 script {
-                    echo "Deploying application..."
-                    bat "${VIRTUAL_ENV}\\Scripts\\activate && python deploy.py"
+                    echo "Deploying application ..."
+                    bat """
+                        if not exist "${DEPLOYDIR}" mkdir "${DEPLOYDIR}"
+                        copy app.py "${DEPLOYDIR}"
+                    """
+                    echo "Application deployed."
                 }
             }
-        }
+}
+
     }
     post {
         always {
