@@ -2,12 +2,13 @@ pipeline {
     agent any
     environment {
         VIRTUAL_ENV = 'venv'
+        PYTHONIOENCODING = 'utf-8' // Fix for UnicodeEncodeError in Bandit
     }
     stages {
         stage('Setup') {
             steps {
                 script {
-                    if (!fileExists("${env.WORKSPACE}\\${VIRTUAL_ENV}")) {
+                    if (!fileExists("${env.WORKSPACE}/${VIRTUAL_ENV}")) {
                         bat "python -m venv ${VIRTUAL_ENV}"
                     }
                     bat "${VIRTUAL_ENV}\\Scripts\\activate && pip install -r requirements.txt"
@@ -24,7 +25,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    bat "set PYTHONPATH=%WORKSPACE% && ${VIRTUAL_ENV}\\Scripts\\activate && pytest"
+                    bat "${VIRTUAL_ENV}\\Scripts\\activate && pytest"
                 }
             }
         }
@@ -39,13 +40,14 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    bat "${VIRTUAL_ENV}\\Scripts\\activate && bandit -r ."
+                    bat "${VIRTUAL_ENV}\\Scripts\\activate && bandit -r . -f json -o bandit-report.json"
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
+                    echo "Deploying application..."
                     bat "${VIRTUAL_ENV}\\Scripts\\activate && python deploy.py"
                 }
             }
