@@ -44,12 +44,8 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    try {
                         bat 'venv\\Scripts\\activate && bandit -r .'
-                    } catch (Exception e) {
-                        echo "Bandit scan failed, but proceeding."
-                        currentBuild.result = 'UNSTABLE'
-                    }
+                    
                 }
             }
 }
