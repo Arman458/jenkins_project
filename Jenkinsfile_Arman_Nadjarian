@@ -44,7 +44,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                        bat 'venv\\Scripts\\activate && bandit -r .'
+                        bat 'venv\\Scripts\\activate && bandit -r app.py'
                     
                 }
             }
