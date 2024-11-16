@@ -24,7 +24,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    bat "${VIRTUAL_ENV}\\Scripts\\activate && pytest"
+                    bat "set PYTHONPATH=%WORKSPACE% && ${VIRTUAL_ENV}\\Scripts\\activate && pytest"
                 }
             }
         }
