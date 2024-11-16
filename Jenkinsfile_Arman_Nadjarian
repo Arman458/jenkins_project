@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         VIRTUAL_ENV = 'venv'
-        PYTHONIOENCODING = 'utf-8' // Fix for UnicodeEncodeError in Bandit
+        PYTHONIOENCODING = 'utf-8' 
     }
     stages {
         stage('Setup') {
@@ -23,12 +23,16 @@ pipeline {
             }
         }
         stage('Test') {
-            steps {
-                script {
-                    bat "${VIRTUAL_ENV}\\Scripts\\activate && pytest"
-                }
+        steps {
+            script {
+                bat """
+                set PYTHONPATH=${env.WORKSPACE}
+                ${VIRTUAL_ENV}\\Scripts\\activate && pytest
+                """
             }
-        }
+    }
+}
+
         stage('Coverage') {
             steps {
                 script {
